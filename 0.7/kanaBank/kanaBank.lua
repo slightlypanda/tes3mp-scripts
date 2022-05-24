@@ -1,4 +1,5 @@
--- kanaBank - Release 3 - For tes3mp 0.7-alpha
+-- kanaBank - Release 3.5 - same as 3 but fixed for tes3mp 8.1
+-- updated by Cam (Orphen) to fix compatibility with logicHandler in 8.1
 -- Implements a banking system for players to utilise
 
 --[[ INSTALLATION
@@ -12,8 +13,8 @@ a) kanaBank = require("custom.kanaBank")
 local scriptConfig = {}
 
 scriptConfig.useBankerRank = 0 -- The staffRank required to use a bank via bankers
-scriptConfig.useBankCommandRank = 0 -- The staffRank required to use the /bank command
-scriptConfig.openOtherPlayersBankRank = 1 -- The staffRank required to use the /bank playername command
+scriptConfig.useBankCommandRank = 1 -- The staffRank required to use the /bank command
+scriptConfig.openOtherPlayersBankRank = 2 -- The staffRank required to use the /bank playername command
 
 -- Any object that's identified as a "banker" will open a player's bank on activation
 -- Provided the player meets the useBankerRank requirement. This /should/ override the default activation
@@ -242,8 +243,16 @@ Methods.CreateContainerForPlayer = function(playerName)
 	
 	-- Just make a dummy location because we don't care about where it'll be
 	local location = {posX = 0, posY = 0, posZ = 0, rotX = 0, rotY = 0, rotZ = 0}
-	
-	local uniqueIndex = logicHandler.CreateObjectAtLocation(scriptConfig.storageCell, location, scriptConfig.recordRefId, packetType)
+		
+	local objectData = {
+        refId = scriptConfig.recordRefId,
+        count = 1,
+        charge = -1,
+        enchantmentCharge = -1,
+        soul = "",
+        scale = 1
+    }
+      local uniqueIndex = logicHandler.CreateObjectAtLocation(scriptConfig.storageCell, location, objectData, "place")
 	
 	doLog("Created a bank container with uniqueIndex " .. uniqueIndex .. " for player " .. playerName)
 	
